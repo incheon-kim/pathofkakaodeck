@@ -5,6 +5,11 @@ from steam import shortcuts, steam_instance
 from util import zenity
 from common import constants
 
+def _get_user_id() -> str:
+    userdata_path = Path.home() / '.steam' / 'steam' / 'userdata'
+    for dir in userdata_path.iterdir():
+        if dir.is_dir():
+            return dir.name
 
 def handle_scheme(scheme_url : str):
     token, userid = parse_url(scheme_url)
@@ -12,7 +17,7 @@ def handle_scheme(scheme_url : str):
         zenity.info(constants.APP_NAME, f'시작 옵션 파싱 실패!\r\n{scheme_url}')
         return
     
-    if shortcuts.update_launch_option('', f'--kakao {token} {userid}'):
+    if shortcuts.update_launch_option(_get_user_id(), f'--kakao {token} {userid}'):
         launch_appid(get_appid)
     else:
         zenity.info(constants.APP_NAME, '시작 옵션 업데이트 실패!')
@@ -44,6 +49,7 @@ def get_appid() -> str:
 def try_acquire(timeout=60):
     browser = open_browser()
     if browser is None:
+        zenity.info(constants.APP_NAME, "Chrome 또는 Firefox를 찾을 수 없습니다.")
         return
 
     fifo_path = Path("/tmp/poe2_fifo")
@@ -51,7 +57,7 @@ def try_acquire(timeout=60):
         os.mkfifo(fifo_path)    
     fifo_fd = os.open(fifo_path, os.O_RDONLY | os.O_NONBLOCK)
     try:
-        ready, _, _ = select.select([fifo_fd], [], [], 60)
+        ready, _, _ = select.select([fifo_fd], [], [], timeout)
         if not ready:
             zenity.info(constants.APP_NAME, "타임아웃 60초가 지났습니다. 브라우저를 종료합니다.")
         browser.kill()
