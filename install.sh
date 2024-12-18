@@ -1,9 +1,9 @@
 #! /bin/bash
 
-if [ "$(id -u)" -ne 0 ]
-  then echo "'sudo sh install.sh' 명령어로 실행해주세요."
-  exit
-fi
+# if [ "$(id -u)" -ne 0 ]
+#   then echo "'sudo sh install.sh' 명령어로 실행해주세요."
+#   exit
+# fi
 
 SCRIPT_DIR=$(dirname $(realpath $0))
 VENV_DIR="$SCRIPT_DIR/venv"
