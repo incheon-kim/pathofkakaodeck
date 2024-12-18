@@ -16,9 +16,8 @@ def create_application(exec: str, venv: str) -> bool:
             Icon=application-default-icon
             Categories=Utility;
         """
-
-        with target_file.open("w", encoding='utf-8')as f:
-            f.write(txt)
+        print(txt)
+        target_file.write_text(txt)
         
         return True
     except Exception as err:
@@ -28,7 +27,7 @@ def create_application(exec: str, venv: str) -> bool:
 def create_handler(exec: str, venv: str) -> bool:
     try:
         local_applications_dir = get_local_applications()
-        target_file = local_applications_dir / f'Daum Game Starter Handler (POE2).desktop'
+        target_file = local_applications_dir / f'Path of Kakao.desktop'
 
         txt = f"""
             [Desktop Entry]
@@ -40,10 +39,9 @@ def create_handler(exec: str, venv: str) -> bool:
             Icon=application-default-icon
             Categories=Game;
         """
+        print(txt)
+        target_file.write_text(txt)
 
-        with target_file.open("w", encoding='utf-8')as f:
-            f.write(txt)
-        
         return True
     except Exception as err:
         print(err)

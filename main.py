@@ -10,8 +10,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '-i', 
     '--install', 
-    type=str,
-    description='(scheme|desktop)')
+    type=str)
 parser.add_argument(
     '-s', 
     '--scheme', 

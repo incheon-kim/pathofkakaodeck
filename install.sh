@@ -18,7 +18,7 @@ else
 fi
 
 # check pip
-if [ ! -f "$SCRIPT_DIR/venv/bin/pip"]; then
+if [ ! -f "$SCRIPT_DIR/venv/bin/pip" ]; then
     echo "Python 환경 구성중..."
     if [ ! -f "$VENV_DIR/bin/pip" ]; then
         echo "Python 환경 구성중...(pip)"
@@ -39,7 +39,7 @@ fi
 "$VENV_DIR/bin/pip" install --upgrade pip
 
 # python dependencies
-"$VENV_DIR/bin/pip" install argparse vdf 
+"$VENV_DIR/bin/pip" install argparse vdf psutil
 
 # create url scheme handler
 "$VENV_DIR/bin/python" "$SCRIPT_DIR/main.py" --install scheme --dir "$SCRIPT_DIR" --venv "$VENV_DIR/bin/python"
