@@ -32,11 +32,12 @@ print(args)
 if args.scheme is not None:
     runner.handle_scheme()
 elif args.install is not None and args.dir is not None and args.venv is not None:
-    match (args.install):
-        case ["scheme"]:
-            desktop.create_handler(args.dir, args.venv)
-        case ["desktop"]:
-            desktop.create_handler(args.dir, args.venv)
+    if args.install == "scheme":
+        desktop.create_handler(args.dir, args.venv)
+    elif args.install == "desktop":
+        desktop.create_handler(args.dir, args.venv)
+    else:
+        parser.print_help()
 elif args.run:
     runner.try_acquire()
     pass
