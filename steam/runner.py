@@ -1,4 +1,4 @@
-import subprocess, os, select, time
+import subprocess, os, select, logging
 from pathlib import Path
 from urllib.parse import unquote
 from steam import shortcuts, steam_instance
@@ -12,6 +12,7 @@ def _get_user_id() -> str:
             return dir.name
 
 def handle_scheme(scheme_url : str):
+    logging.info(f'scheme({scheme_url})')
     token, userid = parse_url(scheme_url)
     if not token or not userid:
         zenity.info(constants.APP_NAME, f'시작 옵션 파싱 실패!\r\n{scheme_url}')

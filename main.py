@@ -1,4 +1,4 @@
-import argparse
+import argparse, logging
 from install import desktop
 from steam import runner
 
@@ -29,8 +29,11 @@ args = parser.parse_args()
 
 print(args)
 
+logging.basicConfig(filename=os.path.expanduser("~/pok2.log"), level=logging.NOTSET)
+
 if args.scheme is not None:
-    runner.handle_scheme(args.scheme)
+    logging.info(f'scheme handler called ({args.scheme})')
+    runner.handle_scheme(str(args.scheme))
 elif args.install is not None and args.dir is not None and args.venv is not None:
     if args.install == "scheme":
         desktop.create_application(args.dir, args.venv)
