@@ -10,6 +10,7 @@ def _get_user_id() -> str:
     for dir in userdata_path.iterdir():
         if dir.is_dir():
             return dir.name
+    return None
 
 def handle_scheme(scheme_url : str):
     logging.info(f'scheme({scheme_url})')
@@ -18,6 +19,9 @@ def handle_scheme(scheme_url : str):
         zenity.info(constants.APP_NAME, f'시작 옵션 파싱 실패!\r\n{scheme_url}')
         return
     
+    logging.info(f'token({token})')
+    logging.info(f'userid({userid})')
+
     if shortcuts.update_launch_option(_get_user_id(), f'--kakao {token} {userid}'):
         launch_appid(get_appid)
     else:

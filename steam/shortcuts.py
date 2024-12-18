@@ -1,4 +1,4 @@
-import vdf, os, random
+import vdf, os, logging
 from pathlib import Path
 from util import zenity
 from common import constants
@@ -33,6 +33,7 @@ def _get_file_path(file_name : str) -> str:
         return None
 
 def update_launch_option(user_id : str, launch_option : str, proton : str = "proton_experimental"):
+    logging.debug(f'user_id({user_id}) option({launch_option})')
     # vdf 파일 오픈
     try:
         with _get_shortcuts_path(user_id).open("rb") as f:
@@ -43,9 +44,11 @@ def update_launch_option(user_id : str, launch_option : str, proton : str = "pro
         with _get_root_config_path().open('r') as f:
             root_config = vdf.load(f)
     except Exception as e:
+        logging.error(f'vdf 파일 열기 실패, {e}')
         zenity.Info(constants.APP_NAME, f'Steam 설정 파일 열기 실패!\r\n{e}')
         return False
     
+    logging.info("VDF 파일 열기 완료")
 
     # 탐색 및 수정 시작
     try:
@@ -53,6 +56,7 @@ def update_launch_option(user_id : str, launch_option : str, proton : str = "pro
             appid = int(game.get("appid")) + 2**32 # signed to unsigned 32-bit
             exe_path = game.get("Exe", "")
             if "PathOfExile_x64_KG.exe" in exe_path:
+                logging.info('exe found')
                 # 런치 옵션 세팅
                 game["LaunchOptions"] = launch_option or ""
 
@@ -74,6 +78,7 @@ def update_launch_option(user_id : str, launch_option : str, proton : str = "pro
                 break
         else:
             # shortcuts 내에서 PathOfExile_x64_KG.exe를 찾지 못함
+            logging.info('exe not found')
             appid = constants.DEFAULT_APP_ID_UNSIGNED
             binary_path = _get_file_path("PathOfExile_x64_KG.exe")
             game_entry = {
