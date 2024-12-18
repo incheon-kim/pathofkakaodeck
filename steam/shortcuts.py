@@ -53,7 +53,7 @@ def update_launch_option(user_id : str, launch_option : str, proton : str = "pro
     # 탐색 및 수정 시작
     try:
         for _, game in shortcuts.get("shortcuts", {}):
-            appid = int(game.get("appid")) + 2**32 # signed to unsigned 32-bit
+            appid = int(game.get("appid", "")) + 2**32 # signed to unsigned 32-bit
             exe_path = game.get("Exe", "")
             if "PathOfExile_x64_KG.exe" in exe_path:
                 logging.info('exe found')
@@ -115,6 +115,7 @@ def update_launch_option(user_id : str, launch_option : str, proton : str = "pro
                 app_compat["name"] = proton
                 compat_mapping[appid] = app_compat
     except Exception as e:
+        logging.error(f'설정 파일 수정 실패, {e}')
         zenity.Info(constants.APP_NAME, f'Steam 설정 파일 수정 실패!\r\n{e}')
         return False
     
@@ -125,6 +126,7 @@ def update_launch_option(user_id : str, launch_option : str, proton : str = "pro
             vdf.dump(root_config, f)
         _write_appid(appid)            
     except Exception as e:
+        logging.error(f'설정 파일 저장 실패, {e}')
         zenity.Info(constants.APP_NAME, f'Steam 설정 파일 저장 실패!\r\n{e}')
         return False
     
