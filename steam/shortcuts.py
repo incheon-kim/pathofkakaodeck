@@ -19,7 +19,7 @@ def _write_appid(appid : int):
     file_path = Path.home() / ".poe2appid"
     if not file_path.exists():
         file_path.touch()
-    file_path.write_text(appid)
+    file_path.write_text(str(appid))
 
 def _get_file_path(file_name : str) -> str:
     try:
@@ -88,14 +88,14 @@ def update_launch_option(user_id : str, launch_option : str, proton : str = "pro
                 "StartDir" : os.path.dirname(binary_path),
                 "icon": "",
                 "ShortcutPath": "",
-                "IsHidden": "0",
-                "AllowDesktopConfig": "1",
-                "AllowOverlay" : "1",
-                "OpenVR": "0",
-                "Devkit" : "0",
+                "IsHidden": 0,
+                "AllowDesktopConfig": 1,
+                "AllowOverlay" : 1,
+                "OpenVR": 0,
+                "Devkit" : 0,
                 "DevkitGameID": "",
-                "DevkitOverrideAppID": "0",
-                "LastPlayTime": "0",
+                "DevkitOverrideAppID": 0,
+                "LastPlayTime": 0,
                 "FlatpakAppID": "",
                 "tags" : {},
             }
@@ -124,7 +124,7 @@ def update_launch_option(user_id : str, launch_option : str, proton : str = "pro
             vdf.binary_dump(shortcuts, f)
         with _get_root_config_path().open('w') as f:
             vdf.dump(root_config, f)
-        _write_appid(appid)            
+        _write_appid(appid)
     except Exception as e:
         logging.error(f'설정 파일 저장 실패, {e}')
         zenity.Info(constants.APP_NAME, f'Steam 설정 파일 저장 실패!\r\n{e}')
