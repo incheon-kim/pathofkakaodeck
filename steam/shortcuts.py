@@ -35,14 +35,18 @@ def _get_file_path(file_name : str) -> str:
 def update_launch_option(user_id : str, launch_option : str, proton : str = "proton_experimental"):
     # vdf 파일 오픈
     try:
-        with _get_shortcuts_path(user_id).open("rwb") as f:
+        with _get_shortcuts_path(user_id).open("rb") as f:
             shortcuts = vdf.binary_load(f)
+            with (Path.home() / f'shortcuts.vdf.bak').open('wb') as bf:
+                f.seek(os.SEEK_SET)
+                bf.write(f.read())
         with _get_root_config_path().open('r') as f:
             root_config = vdf.load(f)
     except Exception as e:
         zenity.Info(constants.APP_NAME, f'Steam 설정 파일 열기 실패!\r\n{e}')
         return False
     
+
     # 탐색 및 수정 시작
     try:
         for _, game in shortcuts.get("shortcuts", {}):
