@@ -1,4 +1,4 @@
-import argparse, logging
+import argparse, logging, os
 from install import desktop
 from steam import runner
 
