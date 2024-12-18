@@ -1,6 +1,6 @@
 from pathlib import Path
 
-def create_application(exec: str, venv: str) -> bool:
+def create_handler(exec: str, venv: str) -> bool:
     try:
         local_applications_dir = get_local_applications()
         target_file = local_applications_dir / f'Daum Game Starter Handler (POE2).desktop'
@@ -24,7 +24,7 @@ def create_application(exec: str, venv: str) -> bool:
         print(err)
         return False
 
-def create_handler(exec: str, venv: str) -> bool:
+def create_application(exec: str, venv: str) -> bool:
     try:
         local_applications_dir = get_local_applications()
         target_file = local_applications_dir / f'Path of Kakao.desktop'
