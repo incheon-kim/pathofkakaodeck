@@ -34,7 +34,7 @@ if args.scheme is not None:
 elif args.install is not None and args.dir is not None and args.venv is not None:
     if args.install == "scheme":
         desktop.create_handler(args.dir, args.venv)
-    elif args.install == "desktop":
+    elif args.install == "launcher":
         desktop.create_handler(args.dir, args.venv)
     else:
         parser.print_help()
