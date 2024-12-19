@@ -69,7 +69,7 @@ def update_launch_option(user_id : str, launch_option : str, proton : str = "pro
                 if compat_mapping == {}:
                     zenity.info(constants.APP_NAME, "Proton 설정을 실패했습니다. 수동으로 Proton 설정해주세요.")
                 else:
-                    app_compat = compat_mapping(appid, {
+                    app_compat = compat_mapping.get(appid, {
                         "name": "",
                         "config": "",
                         "priority" : "250"
@@ -109,7 +109,7 @@ def update_launch_option(user_id : str, launch_option : str, proton : str = "pro
             if compat_mapping == {}:
                 zenity.info(constants.APP_NAME, "Proton 설정을 실패했습니다. 수동으로 Proton 설정해주세요.")
             else:
-                app_compat = compat_mapping(appid, {
+                app_compat = compat_mapping.get(appid, {
                     "name": "",
                     "config": "",
                     "priority" : "250"
