@@ -12,6 +12,17 @@ def _get_user_id() -> str:
             return dir.name
     return None
 
+def _write_to_fifo() -> bool:
+    fifo_path = Path("/tmp/poe2fifo")
+    if not fifo_path.exists():
+        return False
+    
+    with open(fifo_path, mode="w") as fifo:
+        fifo.write("TOKEN ACQUIRED")
+        fifo.flush()
+
+    return True
+
 def handle_scheme(scheme_url : str):
     logging.info(f'scheme({scheme_url})')
     token, userid = parse_url(scheme_url)
@@ -23,6 +34,7 @@ def handle_scheme(scheme_url : str):
     logging.info(f'userid({userid})')
 
     if shortcuts.update_launch_option(_get_user_id(), f'--kakao {token} {userid}'):
+        _write_to_fifo()
         launch_appid(get_appid)
     else:
         zenity.info(constants.APP_NAME, '시작 옵션 업데이트 실패!')
@@ -57,21 +69,31 @@ def try_acquire(timeout=60):
         zenity.info(constants.APP_NAME, "Chrome 또는 Firefox를 찾을 수 없습니다.")
         return
 
-    fifo_path = Path("/tmp/poe2_fifo")
+    fifo_path = Path("/tmp/poe2fifo")
     if not fifo_path.exists():
         os.mkfifo(fifo_path)    
     fifo_fd = os.open(fifo_path, os.O_RDONLY | os.O_NONBLOCK)
     try:
-        ready, _, _ = select.select([fifo_fd], [], [], timeout)
-        if not ready:
+        ready_fifo, _, _ = select.select([fifo_fd], [], [], timeout)
+        if not ready_fifo:
             zenity.info(constants.APP_NAME, "타임아웃 60초가 지났습니다. 브라우저를 종료합니다.")
-        browser.kill()
+        else:
+            data = os.read(ready_fifo, 1024)
+            if data:
+                logging.info(data.decode('utf-8'))
+            else:
+                logging.info("got data from pipe but couldn't read data")
     except:
         pass
     finally:
+        browser.stdout.close()
+        browser.stdin.close()
+        browser.stderr.close()
+        browser.terminate()
+        browser.kill()
         if fifo_fd is not None:
             os.close(fifo_fd)
-    browser.wait()
+            os.remove(fifo_path)
 
 
 def open_browser() -> subprocess.Popen[bytes]:
@@ -80,7 +102,7 @@ def open_browser() -> subprocess.Popen[bytes]:
 
     if check_flatpak("com.google.Chrome"):
         return subprocess.Popen(
-            chrome_cmd,
+            ["/usr/bin/flatpak", "run", 'com.google.Chrome', 'poe2.game.daum.net'],
             stdout = subprocess.PIPE,
             stderr = subprocess.PIPE,
             stdin = subprocess.PIPE,

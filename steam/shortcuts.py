@@ -62,6 +62,7 @@ def update_launch_option(user_id : str, launch_option : str, proton : str = "pro
 
                 # 프로톤 세팅
                 compat_mapping = root_config.get("InstallConfigStore", {}) \
+                                            .get("Software", {}) \
                                             .get("Valve", {}) \
                                             .get("Steam", {}) \
                                             .get("CompatToolMapping", {})
@@ -101,6 +102,7 @@ def update_launch_option(user_id : str, launch_option : str, proton : str = "pro
             }
             shortcuts["shortcuts"][str(len(shortcuts["shortcuts"]))] = game_entry
             compat_mapping = root_config.get("InstallConfigStore", {}) \
+                                        .get("Software", {}) \
                                         .get("Valve", {}) \
                                         .get("Steam", {}) \
                                         .get("CompatToolMapping", {})
