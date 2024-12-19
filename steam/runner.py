@@ -78,13 +78,13 @@ def try_acquire(timeout=60):
         if not ready_fifo:
             zenity.info(constants.APP_NAME, "타임아웃 60초가 지났습니다. 브라우저를 종료합니다.")
         else:
-            data = os.read(ready_fifo, 1024)
+            data = os.read(fifo_fd, 1024)
             if data:
                 logging.info(data.decode('utf-8'))
             else:
                 logging.info("got data from pipe but couldn't read data")
-    except:
-        pass
+    except Exception as e:
+        logging.error("Reading pipe error, {e}")
     finally:
         browser.stdout.close()
         browser.stdin.close()
