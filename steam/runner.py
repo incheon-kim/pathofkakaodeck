@@ -1,7 +1,7 @@
-import subprocess, os, select, logging
+import subprocess, os, select, logging, psutil
 from pathlib import Path
 from urllib.parse import unquote
-from steam import shortcuts, steam_instance
+from steam import shortcuts
 from util import zenity
 from common import constants
 
@@ -86,35 +86,38 @@ def try_acquire(timeout=60):
     except Exception as e:
         logging.error("Reading pipe error, {e}")
     finally:
-        browser.stdout.close()
-        browser.stdin.close()
-        browser.stderr.close()
-        browser.terminate()
-        browser.kill()
+        # kill all browser related processes
+        browsers = filter(lambda proc: browser in proc.name(), psutil.process_iter())
+        for proc in browsers:
+            if proc.is_running():
+                proc.kill()
         logging.info('kill signal to browser')
+
         if fifo_fd is not None:
             os.close(fifo_fd)
             os.remove(fifo_path)
 
 
-def open_browser() -> subprocess.Popen[bytes]:
+def open_browser() -> str:
     firefox_cmd = ["/usr/bin/flatpak", "run", 'org.mozilla.firefox', 'poe2.game.daum.net']
     chrome_cmd = ["/usr/bin/flatpak", "run", 'com.google.Chrome', 'poe2.game.daum.net']
 
     if check_flatpak("com.google.Chrome"):
-        return subprocess.Popen(
-            ["/usr/bin/flatpak", "run", 'com.google.Chrome', 'poe2.game.daum.net'],
+        subprocess.Popen(
+            chrome_cmd,
             stdout = subprocess.PIPE,
             stderr = subprocess.PIPE,
             stdin = subprocess.PIPE,
             )
+        return "chrome"
     elif check_flatpak("org.mozilla.firefox"):
-        return subprocess.Popen(
+        subprocess.Popen(
             firefox_cmd,
             stdout = subprocess.PIPE,
             stderr = subprocess.PIPE,
             stdin = subprocess.PIPE,
             )
+        return "firefox"
     else:
         return None
 
