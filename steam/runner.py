@@ -91,6 +91,7 @@ def try_acquire(timeout=60):
         browser.stderr.close()
         browser.terminate()
         browser.kill()
+        logging.info('kill signal to browser')
         if fifo_fd is not None:
             os.close(fifo_fd)
             os.remove(fifo_path)

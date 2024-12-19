@@ -28,8 +28,7 @@ parser.add_argument('-r', '--run', action='store_true')
 args = parser.parse_args()
 
 print(args)
-
-logging.basicConfig(filename=os.path.expanduser("~/pok2.log"), level=logging.NOTSET)
+logging.basicConfig(filename=os.path.expanduser("~/pok2.log"), level=logging.NOTSET, format="[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
 
 if args.scheme is not None:
     logging.info(f'scheme handler called ({args.scheme})')
